@@ -1,0 +1,2 @@
+migrate create -ext sql -dir generated/migrations -seq user
+migrate -path generated/migrations -database "postgresql://postgres:mysecretpassword@109.123.238.119:5432/postgres?sslmode=disable" -verbose up

@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Go Application",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [],
+            "env": {},
+            "buildFlags": "",
+            "logOutput": "debugger",
+            "showLog": true,
+            "trace": "verbose"
+        }
+    ]
+}

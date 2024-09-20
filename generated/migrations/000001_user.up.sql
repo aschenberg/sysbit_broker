@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS users (
+	user_id BIGINT PRIMARY KEY,
+	app_id VARCHAR(50) UNIQUE NOT NULL,
+	email VARCHAR(50) UNIQUE NOT NULL,
+	picture TEXT,
+	role TEXT[] NOT NULL,
+	is_active BOOLEAN NOT NULL DEFAULT TRUE,
+	name TEXT,
+	refresh_token TEXT NOT NULL,
+	is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+	created_at BIGINT NOT NULL,
+	updated_at BIGINT NOT NULL
+);
