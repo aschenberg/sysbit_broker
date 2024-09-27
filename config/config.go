@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -13,7 +14,9 @@ type Config struct {
 	Server  ServerConfig
 	JWT     JWTConfig
 	Postgre PostgreConfig
-	OpenID  OpenID
+	OpenID  OpenIDConfig
+	S3       S3Config
+	Redis    RedisConfig
 }
 
 type ServerConfig struct {
@@ -29,6 +32,19 @@ type JWTConfig struct {
 	RefreshTokenSecret       string `env:"JWT_REFRESH_TOKEN_SECRET"`
 }
 
+type RedisConfig struct {
+	Host               string        `env:"REDIS_HOST"`
+	Port               string        `env:"REDIS_PORT"`
+	Password           string        `env:"REDIS_PASSWORD"`
+	Db                 string        `env:"REDIS_DB"`
+	DialTimeout        time.Duration `env:"REDIS_DIAL_TIMEOUT"`
+	ReadTimeout        time.Duration `env:"REDIS_READ_TIMEOUT"`
+	WriteTimeout       time.Duration `env:"REDIS_WRITE_TIMEOUT"`
+	IdleCheckFrequency time.Duration `env:"REDIS_IDLE_CHECK_FREQ"`
+	PoolSize           int           `env:"REDIS_POOLSIZE"`
+	PoolTimeout        time.Duration `env:"REDIS_POOL_TIMEOUT"`
+}
+
 type PostgreConfig struct {
 	PG_Username      string `env:"PG_USERNAME"`
 	PG_Password      string `env:"PG_PASSWORD"`
@@ -39,11 +55,16 @@ type PostgreConfig struct {
 	PG_MIGRATION_URL string `env:"PG_MIGRATION_URL"`
 }
 
-type OpenID struct {
+type OpenIDConfig struct {
 	ClientId     string `env:"OPENID_CLIENT_ID"`
 	ClientSecret string `env:"OPENID_CLIENT_SECRET"`
 	RedirectUrl  string `env:"OPENID_REDIRECT_URL"`
 	IssuerUrl    string `env:"OPENID_ISSUER_URL"`
+}
+
+type S3Config struct{
+	Baseurl string  `env:"S3_BASEURL"`
+	Path string  `env:"S3_PATH"`
 }
 
 func NewConfig() *Config {

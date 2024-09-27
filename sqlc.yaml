@@ -22,7 +22,7 @@ sql:
     # schema refers to where our schema definitions located
     # schema: "schema.sql" # will refer a file
     # or
-    schema: "/generated/migrations" # will refer a directory
+    schema: "/migrations" # will refer a directory
     gen:
       go:
         package: "pg"

@@ -6,8 +6,8 @@ import (
 	"sysbitBroker/config"
 	"sysbitBroker/domain/entity"
 	"sysbitBroker/domain/resp"
+	"sysbitBroker/pkg"
 	"sysbitBroker/usecase"
-	"sysbitBroker/utils"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -135,7 +135,7 @@ func (h *userHandler) GenerateAccessToken(c *gin.Context) {
 	}
 
 	//Extract ID from refresh token
-	user, err := utils.ExtractIDFromToken(request.RefreshToken, h.Cfg.JWT.RefreshTokenSecret)
+	user, err := pkg.ExtractIDFromToken(request.RefreshToken, h.Cfg.JWT.RefreshTokenSecret)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, resp.GenerateBaseResponseWithValidationError(nil, false, resp.ValidationError, err))
 	}

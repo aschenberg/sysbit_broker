@@ -5,8 +5,10 @@ import (
 	"errors"
 	"sysbitBroker/config"
 	"sysbitBroker/domain/entity"
+	"sysbitBroker/pkg"
 	"sysbitBroker/repository"
 	"sysbitBroker/utils"
+
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -38,7 +40,7 @@ func (uc *userUsecase) LoginOrRegister(c context.Context, claims entity.GoogleCl
 
 	createTime := time.Now().UTC().UnixMilli()
 	//Generated Snow Flake ID
-	keyID, err := utils.GenerateID(1, 1, 1)
+	keyID, err := pkg.GenerateID(1, 1, 1)
 	if err != nil {
 		// uc.Log.Error(logging.Snowflake, logging.CreatedID, err.Error(), nil)
 		return entity.LoginResponse{}, "", err
@@ -68,7 +70,7 @@ func (uc *userUsecase) LoginOrRegister(c context.Context, claims entity.GoogleCl
 		UserID: utils.Int64ToStr(usr.UserID),
 		Email:  usr.Email, Role: usr.Role}
 
-	refreshToken, err := utils.CreateRefreshToken(
+	refreshToken, err := pkg.CreateRefreshToken(
 		user, uc.Cfg.JWT.RefreshTokenSecret,
 		uc.Cfg.JWT.RefreshTokenExpireHour)
 	if err != nil {
@@ -86,7 +88,7 @@ func (uc *userUsecase) LoginOrRegister(c context.Context, claims entity.GoogleCl
 	}
 
 	//Generated Access Token
-	accessToken, err := utils.CreateAccessToken(
+	accessToken, err := pkg.CreateAccessToken(
 		user, uc.Cfg.JWT.RefreshTokenSecret,
 		uc.Cfg.JWT.AccessTokenExpireMinutes)
 	if err != nil {
@@ -119,7 +121,7 @@ func (uc *userUsecase) CheckRefreshToken(c context.Context, refresh string, user
 		return entity.RefreshTokenResp{}, errors.New("token doesn't match")
 	}
 
-	access, err := utils.CreateAccessToken(entity.User{UserID: utils.Int64ToStr(user.UserID), Role: user.Role}, uc.Cfg.JWT.AccessTokenSecret, uc.Cfg.JWT.AccessTokenExpireMinutes)
+	access, err := pkg.CreateAccessToken(entity.User{UserID: utils.Int64ToStr(user.UserID), Role: user.Role}, uc.Cfg.JWT.AccessTokenSecret, uc.Cfg.JWT.AccessTokenExpireMinutes)
 	if err != nil {
 		return entity.RefreshTokenResp{}, err
 	}

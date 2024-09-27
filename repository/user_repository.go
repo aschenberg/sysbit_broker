@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"sysbitBroker/config"
+	"sysbitBroker/pkg"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,7 +18,7 @@ type userRepository struct {
 	db *pgxpool.Pool
 }
 
-func NewUserRepository(pg *config.Postgres) IUserRepository {
+func NewUserRepository(pg *pkg.Postgres) IUserRepository {
 	return &userRepository{
 		db: pg.Pool,
 	}

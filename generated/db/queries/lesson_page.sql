@@ -1,6 +1,7 @@
 -- name: AddLessonPage :one
 INSERT INTO lesson_page (lesson_id,page) 
-VALUES($1,$2) RETURNING *;
+VALUES($1,$2)ON CONFLICT (lesson_id,page) 
+DO NOTHING RETURNING *;
 
 
 -- name: GetLessonPage :many

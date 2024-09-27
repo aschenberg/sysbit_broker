@@ -8,45 +8,15 @@ import (
 	"os/signal"
 	"sysbitBroker/config"
 	"sysbitBroker/middleware"
+	"sysbitBroker/pkg"
 	"sysbitBroker/route"
-	"sysbitBroker/utils"
+
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
-
-var (
-	secretKey = []byte("keysysbitkey")
-)
-
-type AppId struct {
-	AppId    string `json:"appid"`
-	Password string `json:"password"`
-}
-
-type Lesson struct {
-	Lesson string `json:"Lesson"`
-	Page   string `json:"Page"`
-	Result string `json:"Result"`
-}
-
-type Progress struct {
-	AppId  string   `json:"appid"`
-	Active string   `json:"active"`
-	Done   []Lesson `json:"done"`
-}
-
-type OKReplyProgress struct {
-	Status string
-	Data   Progress
-}
-
-type OKReply struct {
-	Status  string
-	Message string
-}
 
 func main() {
 	// Create context that listens for the interrupt signal from the OS.
@@ -64,15 +34,22 @@ func main() {
 	})
 
 	// OpenID Initialized
-	openIDProvider := utils.NewOpenIDProvider(cfg)
-	openIDCfg := utils.NewOpenIDConfig(cfg, openIDProvider)
+	openIDProvider := pkg.NewOpenIDProvider(cfg)
+	openIDCfg := pkg.NewOpenIDConfig(cfg, openIDProvider)
+
 	//Postgre Initialize
-	pg, err := config.NewPgx(cfg)
+	pg, err := pkg.NewPgx(cfg)
 	if err != nil {
 		fmt.Println(err.Error())
 		// log.Fatal(logging.Postgres, logging.Startup, err.Error(), nil)
 	}
 
+	//Redis Initialize
+	rdb, err := pkg.NewRedis(cfg)
+	if err != nil {
+		fmt.Println(err.Error())
+		// log.Fatal(logging.Postgres, logging.Startup, err.Error(), nil)
+	}
 	api := router.Group("/api")
 	//Add check usertoken
 	m := api.Group("/m")
@@ -83,15 +60,7 @@ func main() {
 
 		//Handle for Lesson
 		lesson := m.Group("/lesson", middleware.JwtAuthMiddleware(cfg.JWT.RefreshTokenSecret))
-		route.Lesson(lesson, cfg, pg)
-
-		lessonheader := m.Group("/lesson_page", middleware.JwtAuthMiddleware(cfg.JWT.RefreshTokenSecret))
-		route.LessonPage(lessonheader, cfg, pg)
-
-		lessoncontent := m.Group("/lesson_content", middleware.JwtAuthMiddleware(cfg.JWT.RefreshTokenSecret))
-		route.LessonContent(lessoncontent, cfg, pg)
-	}
-	{
+		route.Lesson(lesson, cfg, pg, rdb)
 
 	}
 
